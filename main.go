@@ -1,33 +1,101 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+	"ticket-booking/constants"
+	"ticket-booking/helper"
+)
+
+var bookings []string
+var remainingTickets uint = 10
 
 func main() {
-	conferenceName := "Go Conference"
-	totalTickets := 50
-	var userName, email string
-	var remainingTickets uint = 5
-	var userTickets uint
-	fmt.Printf("Hello, welcome to %v booking application \n", conferenceName)
-	fmt.Printf("We have a total of %v tickets, and remaining of %v tickets \n", totalTickets, remainingTickets)
 
-	fmt.Printf("Please enter your name: ")
-	fmt.Scan(&userName)
+	greetUsers()
+
+	for remainingTickets > 0 {
+
+		firstName, lastName, email, city, userTickets := getUserInput()
+
+		isValidEmail := helper.ValidateUserEmail(email)
+		if !isValidEmail {
+			fmt.Printf("Enter a valid email \n")
+			continue
+		}
+
+		switch city {
+		case "London":
+			// Exce
+		case "Paris":
+			// Exce
+		case "California":
+			// Exce
+		default:
+			// "N"
+		}
+
+		if userTickets <= remainingTickets {
+			bookTickets(userTickets, firstName, lastName)
+			fmt.Printf("User %v has booked %v tickets. Email confirmation sent to %v \n \n", firstName, userTickets, email)
+		} else {
+			fmt.Printf("There are only %v tickets remaining\n", remainingTickets)
+			continue
+		}
+
+		if remainingTickets == 0 {
+			fmt.Printf("Ticket are sold out \n")
+			break
+		}
+	}
+	firstNamesList := printFirstNames(bookings)
+	fmt.Printf("These are the tickets booked: \n %v \n", firstNamesList)
+
+	fmt.Printf("%v tickets are remaining \n", remainingTickets)
+}
+
+/* Method to greet the users */
+func greetUsers() {
+	fmt.Printf("Hello, welcome to %v booking application \n", constants.ConferenceName)
+	fmt.Printf("We have a total of %v tickets, and remaining of %v tickets \n", constants.TotalTickets, remainingTickets)
+}
+
+/* Method to print the first names of all the users */
+func printFirstNames(bookings []string) []string {
+	var firstNamesList []string
+	for _, booking := range bookings {
+		names := strings.Split(booking, " ")
+		firstNamesList = append(firstNamesList, names[0])
+	}
+	return firstNamesList
+}
+
+/* Method to get the user input */
+func getUserInput() (string, string, string, string, uint) {
+
+	var firstName, lastName, email string
+	var userTickets uint
+	var city string
+
+	fmt.Printf("Please enter your First name and last name: ")
+	fmt.Scan(&firstName)
+	fmt.Scan(&lastName)
 
 	fmt.Printf("Please enter your email: ")
 	fmt.Scan(&email)
 
-	fmt.Printf("Please enter the no of tickets: ")
+	fmt.Printf("Enter the city you want to book your tickets in:")
+	fmt.Scan(&city)
+
+	fmt.Printf("Please enter the no of ticket/s: ")
 	fmt.Scan(&userTickets)
 
-	if userTickets > remainingTickets {
-		fmt.Println("Not enough tickets")
-	} else {
-		remainingTickets -= userTickets
-		fmt.Println("Ticket booking confirmed")
-		fmt.Printf("User %v has booked %v tickets. Email confirmation sent to %v \n", userName, userTickets, email)
-	}
+	return firstName, lastName, email, city, userTickets
+}
 
-	fmt.Printf("%v tickets are remaining \n", remainingTickets)
-
+/* Ticket booking logic */
+func bookTickets(userTickets uint, firstName string, lastName string) {
+	remainingTickets -= userTickets
+	fmt.Print("Ticket booking confirmed \n")
+	bookings = append(bookings, firstName+" "+lastName)
 }
