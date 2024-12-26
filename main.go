@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"strconv"
 	"ticket-booking/constants"
 	"ticket-booking/helper"
 )
 
-var bookings []string
+var bookings []map[string]string
 var remainingTickets uint = 10
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 		}
 
 		if userTickets <= remainingTickets {
-			bookTickets(userTickets, firstName, lastName)
+			bookTickets(userTickets, firstName, lastName, email)
 			fmt.Printf("User %v has booked %v tickets. Email confirmation sent to %v \n \n", firstName, userTickets, email)
 		} else {
 			fmt.Printf("There are only %v tickets remaining\n", remainingTickets)
@@ -61,11 +61,10 @@ func greetUsers() {
 }
 
 /* Method to print the first names of all the users */
-func printFirstNames(bookings []string) []string {
+func printFirstNames(bookings []map[string]string) []string {
 	var firstNamesList []string
 	for _, booking := range bookings {
-		names := strings.Split(booking, " ")
-		firstNamesList = append(firstNamesList, names[0])
+		firstNamesList = append(firstNamesList, booking["firstName"])
 	}
 	return firstNamesList
 }
@@ -94,8 +93,14 @@ func getUserInput() (string, string, string, string, uint) {
 }
 
 /* Ticket booking logic */
-func bookTickets(userTickets uint, firstName string, lastName string) {
+func bookTickets(userTickets uint, firstName string, lastName string, email string) {
 	remainingTickets -= userTickets
 	fmt.Print("Ticket booking confirmed \n")
-	bookings = append(bookings, firstName+" "+lastName)
+	var userData = make(map[string]string)
+	userData["firstName"] = firstName
+	userData["lastName"] = lastName
+	userData["email"] = email
+	userData["noOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
+
+	bookings = append(bookings, userData)
 }
