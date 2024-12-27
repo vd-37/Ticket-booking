@@ -2,12 +2,18 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"ticket-booking/constants"
 	"ticket-booking/helper"
 )
 
-var bookings []map[string]string
+type UserData struct {
+	firstName   string
+	lastName    string
+	email       string
+	noOfTickets uint
+}
+
+var bookings []UserData
 var remainingTickets uint = 10
 
 func main() {
@@ -50,6 +56,7 @@ func main() {
 	}
 	firstNamesList := printFirstNames(bookings)
 	fmt.Printf("These are the tickets booked: \n %v \n", firstNamesList)
+	// fmt.Printf("These are the tickets booked: \n %v \n", bookings)
 
 	fmt.Printf("%v tickets are remaining \n", remainingTickets)
 }
@@ -61,10 +68,10 @@ func greetUsers() {
 }
 
 /* Method to print the first names of all the users */
-func printFirstNames(bookings []map[string]string) []string {
+func printFirstNames(bookings []UserData) []string {
 	var firstNamesList []string
 	for _, booking := range bookings {
-		firstNamesList = append(firstNamesList, booking["firstName"])
+		firstNamesList = append(firstNamesList, booking.firstName)
 	}
 	return firstNamesList
 }
@@ -96,11 +103,11 @@ func getUserInput() (string, string, string, string, uint) {
 func bookTickets(userTickets uint, firstName string, lastName string, email string) {
 	remainingTickets -= userTickets
 	fmt.Print("Ticket booking confirmed \n")
-	var userData = make(map[string]string)
-	userData["firstName"] = firstName
-	userData["lastName"] = lastName
-	userData["email"] = email
-	userData["noOfTickets"] = strconv.FormatUint(uint64(userTickets), 10)
-
+	var userData = UserData{
+		firstName:   firstName,
+		lastName:    lastName,
+		email:       email,
+		noOfTickets: userTickets,
+	}
 	bookings = append(bookings, userData)
 }
