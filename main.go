@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ticket-booking/constants"
 	"ticket-booking/helper"
+	"time"
 )
 
 type UserData struct {
@@ -19,7 +20,7 @@ var remainingTickets uint = 10
 func main() {
 
 	greetUsers()
-
+	userCount := 0
 	for remainingTickets > 0 {
 
 		firstName, lastName, email, city, userTickets := getUserInput()
@@ -43,7 +44,8 @@ func main() {
 
 		if userTickets <= remainingTickets {
 			bookTickets(userTickets, firstName, lastName, email)
-			fmt.Printf("User %v has booked %v tickets. Email confirmation sent to %v \n \n", firstName, userTickets, email)
+			go sendTickets(bookings[userCount])
+			userCount++
 		} else {
 			fmt.Printf("There are only %v tickets remaining\n", remainingTickets)
 			continue
@@ -83,17 +85,17 @@ func getUserInput() (string, string, string, string, uint) {
 	var userTickets uint
 	var city string
 
-	fmt.Printf("Please enter your First name and last name: ")
+	fmt.Printf("\n Please enter your First name and last name: ")
 	fmt.Scan(&firstName)
 	fmt.Scan(&lastName)
 
-	fmt.Printf("Please enter your email: ")
+	fmt.Printf("\n Please enter your email: ")
 	fmt.Scan(&email)
 
-	fmt.Printf("Enter the city you want to book your tickets in:")
+	fmt.Printf("\n Enter the city you want to book your tickets in:")
 	fmt.Scan(&city)
 
-	fmt.Printf("Please enter the no of ticket/s: ")
+	fmt.Printf("\n Please enter the no of ticket/s: ")
 	fmt.Scan(&userTickets)
 
 	return firstName, lastName, email, city, userTickets
@@ -110,4 +112,11 @@ func bookTickets(userTickets uint, firstName string, lastName string, email stri
 		noOfTickets: userTickets,
 	}
 	bookings = append(bookings, userData)
+}
+
+func sendTickets(ticketDetails UserData) {
+	time.Sleep(20 * time.Second)
+	fmt.Println("\n ####################################")
+	fmt.Printf("Ticket %+v has been sent to %v \n", ticketDetails, ticketDetails.firstName)
+	fmt.Println("\n ####################################")
 }
