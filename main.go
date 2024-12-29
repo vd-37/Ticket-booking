@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"ticket-booking/constants"
 	"ticket-booking/helper"
 	"time"
@@ -16,6 +17,7 @@ type UserData struct {
 
 var bookings []UserData
 var remainingTickets uint = 10
+var wg = sync.WaitGroup{}
 
 func main() {
 
@@ -44,6 +46,7 @@ func main() {
 
 		if userTickets <= remainingTickets {
 			bookTickets(userTickets, firstName, lastName, email)
+			wg.Add(1)
 			go sendTickets(bookings[userCount])
 			userCount++
 		} else {
@@ -61,6 +64,7 @@ func main() {
 	// fmt.Printf("These are the tickets booked: \n %v \n", bookings)
 
 	fmt.Printf("%v tickets are remaining \n", remainingTickets)
+	wg.Wait()
 }
 
 /* Method to greet the users */
@@ -115,8 +119,10 @@ func bookTickets(userTickets uint, firstName string, lastName string, email stri
 }
 
 func sendTickets(ticketDetails UserData) {
-	time.Sleep(20 * time.Second)
+	time.Sleep(5 * time.Second)
+	fmt.Printf("\n Sending ticket details to %v", ticketDetails.firstName)
 	fmt.Println("\n ####################################")
-	fmt.Printf("Ticket %+v has been sent to %v \n", ticketDetails, ticketDetails.firstName)
+	fmt.Printf("Ticket %+v has been sent to %v", ticketDetails, ticketDetails.firstName)
 	fmt.Println("\n ####################################")
+	wg.Done()
 }
